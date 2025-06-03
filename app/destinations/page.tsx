@@ -9,7 +9,9 @@ import { FaImage } from 'react-icons/fa'; // FaClock moved to DurationFilter com
 // Import the new Client Component for duration filter
 import DurationFilter from '@/components/DurationFilter';
 // Import the new Client Component for tour type filter
-import TourTypeFilter from '@/components/TourTypeFilter'; // <--- NEW IMPORT
+import TourTypeFilter from '@/components/TourTypeFilter';
+// Import the new Client Component for sorting
+import SortFilter from '@/components/SortFilter'; // <--- NEW IMPORT
 
 // Define the type for a Tour/Destination item for better type safety
 interface DestinationItem {
@@ -19,15 +21,16 @@ interface DestinationItem {
   description: string;
   price: number;
   duration: string; // The original text duration column (e.g., "4 days")
+  duration_in_days?: number; // IMPORTANT: Add this to interface if you have it in DB and use for sorting
   group_size?: number; // Optional, as some tours might not have it explicitly
   highlights?: string[]; // Array of text
   province: string;
   country: string;
   cover_img_gallery?: string[]; // Array of image URLs
-  rating?: string; // e.g., "4.8 (269)"
+  rating?: string; // e.g., "4.8 (269)" - IMPORTANT: If sorting by rating, this should be numeric in DB
   discount?: string; // e.g., "20 % OFF"
   original_price?: number; // if you have this column
-  tour_type?: string; // <--- NEW: Add tour_type column to interface
+  tour_type?: string; // Add tour_type column to interface
 }
 
 // Helper function to parse duration from string (e.g., "4 days" -> 4)
@@ -47,8 +50,6 @@ function parseDurationToDays(durationStr: string): number | null {
 const ITEMS_PER_PAGE = 6; // Display 6 locations per page
 
 // Duration options for the filter (kept here for server-side logic and passing to client component)
-// This array needs to be available in both Server Component (for filtering logic)
-// and Client Component (for rendering options).
 const durationOptions = [
   { key: '', label: 'Any duration', min: null, max: null },
   { key: '1-3', label: '1-3 days', min: 1, max: 3 },
@@ -56,6 +57,18 @@ const durationOptions = [
   { key: '8-14', label: '8-14 days', min: 8, max: 14 },
   { key: '15+', label: '15+ days', min: 15, max: null }
 ];
+
+// Sort options (must match components/SortFilter.tsx)
+// This array is used in both the Server Component (for query building)
+// and the Client Component (for rendering options).
+const sortOptions = [
+  { key: 'featured', label: 'Featured', column: null, ascending: null },
+  { key: 'price_asc', label: 'Price (Low to High)', column: 'price', ascending: true },
+  { key: 'price_desc', label: 'Price (High to Low)', column: 'price', ascending: false },
+  { key: 'duration_asc', label: 'Duration (Shortest)', column: 'duration', ascending: true }, // Assumes duration_in_days exists
+  { key: 'duration_desc', label: 'Duration (Longest)', column: 'duration', ascending: false }, // Assumes duration_in_days exists
+];
+
 
 // This is an Async Server Component
 export default async function DestinationsPage({
@@ -68,9 +81,10 @@ export default async function DestinationsPage({
   // Get selected duration key from URL
   const selectedDurationKey = searchParams.duration as string || '';
   // Get selected tour types from URL (can be multiple)
-  // In a Server Component, searchParams.tourType will be string | string[] | undefined
   const tourTypeParam = searchParams.tourType;
-  const selectedTourTypes = Array.isArray(tourTypeParam) ? tourTypeParam : (tourTypeParam ? [tourTypeParam] : []); // <--- FIXED: Correctly handle tourType param
+  const selectedTourTypes = Array.isArray(tourTypeParam) ? tourTypeParam : (tourTypeParam ? [tourTypeParam] : []);
+  // Get selected sort key from URL
+  const selectedSortKey = searchParams.sortBy as string || 'featured'; // <--- NEW: Get sortBy param
 
   const supabase = createClient(); // Use the server-side Supabase client
 
@@ -84,11 +98,17 @@ export default async function DestinationsPage({
 
   // 1. Tour Type Filter (Server-side)
   if (selectedTourTypes.length > 0) {
-    // Supabase 'in' operator for matching multiple values in a column
-    // This assumes 'tour_type' is a single text column in your DB (e.g., 'Nature Tours')
-    // If 'tour_type' is a text array (e.g., ['Nature Tours', 'Adventure Tours']), you'd use .cs (contains)
-    query = query.in('tour_type', selectedTourTypes); // <--- Apply tour_type filter
+    query = query.in('tour_type', selectedTourTypes);
   }
+
+  // --- Server-side Sorting ---
+  const sortOption = sortOptions.find(opt => opt.key === selectedSortKey);
+  if (sortOption && sortOption.column) {
+    // Only apply sorting if a valid column is specified
+    // Supabase's order method
+    query = query.order(sortOption.column, { ascending: sortOption.ascending }); // <--- Apply sorting
+  }
+
 
   // Apply pagination limits
   query = query.range(offset, offset + ITEMS_PER_PAGE - 1);
@@ -106,6 +126,9 @@ export default async function DestinationsPage({
 
   // --- Client-side Duration Filtering ---
   // This is performed after fetching data from Supabase, as 'duration' is a text field.
+  // IMPORTANT: For perfectly accurate pagination with client-side filters, you'd
+  // need to fetch *all* data, filter it, then calculate totalPages and paginate.
+  // This approach is a trade-off for simplicity with text duration column.
   if (selectedDurationKey && selectedDurationKey !== '') {
     const durationOption = durationOptions.find(opt => opt.key === selectedDurationKey);
 
@@ -139,9 +162,8 @@ export default async function DestinationsPage({
       {/* Title and Sort */}
       <div className="flex justify-between items-start mb-8 flex-col sm:flex-row">
         <h1 className="text-3xl font-bold mb-4 sm:mb-0">Explore new destinations</h1>
-        <div className="relative text-sm text-gray-600">
-          {/* Sort button/dropdown can be added here if needed */}
-        </div>
+        {/* Sort Filter - Now using the extracted Client Component */}
+        <SortFilter /> {/* <--- NEW COMPONENT USAGE */}
       </div>
 
       {/* Grid Layout */}
@@ -151,8 +173,8 @@ export default async function DestinationsPage({
           {/* Duration Filter */}
           <DurationFilter />
 
-          {/* Tour Type filter - Now using the extracted Client Component */}
-          <TourTypeFilter /> {/* <--- NEW COMPONENT USAGE */}
+          {/* Tour Type filter */}
+          <TourTypeFilter />
         </aside>
 
         {/* Destination Cards */}
