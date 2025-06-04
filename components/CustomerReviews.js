@@ -2,7 +2,7 @@
 "use client"; // This component uses useState, so it needs to be a client component
 import Image from 'next/image'; // Import Image component
 import { useState } from 'react'; // Import useState for interactivity
-import Link from 'next/link'; // Import Link component (though not directly used in this snippet, good practice if it might be)
+// import Link from 'next/link'; // Removed: Link is not used in this component
 
 export default function CustomerReviews() {
   const [currentReviewer, setCurrentReviewer] = useState({
@@ -20,8 +20,7 @@ export default function CustomerReviews() {
     { id: 5, name: 'Michael Brown', title: 'Data Scientist, Amazon', review: 'Efficient, reliable, and great value. The adventure tours were thrilling and well-organized. I\'m already planning my next trip with them!', image: '/assets/images/reviewer5.jpg' },
   ];
 
-  // Removed type annotation 'reviewerId: number'
-  const handleReviewerClick = (reviewerId) => {
+  const handleReviewerClick = (reviewerId) => { // Removed type annotation as it's a .js file
     const selected = reviewers.find(r => r.id === reviewerId);
     if (selected) {
       setCurrentReviewer(selected);
@@ -33,8 +32,10 @@ export default function CustomerReviews() {
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h2 className="text-xl font-semibold text-[#05073C] mb-2">Customer Reviews</h2>
 
-        {/* Font Awesome icon - ensure Font Awesome is loaded globally or use react-icons */}
-        <i className="fa-solid fa-quote-left text-[#EB662B] text-3xl"></i>
+        {/* Using a div as a placeholder for the Font Awesome icon. */}
+        {/* If you have react-icons installed, you could use something like: */}
+        {/* <FaQuoteLeft className="text-[#EB662B] text-3xl" /> */}
+        <div className="text-[#EB662B] text-3xl">"</div> {/* Simple quote for display */}
 
         <p className="text-gray-600 text-lg leading-relaxed font-semibold mt-4">
           {currentReviewer.review}

@@ -1,67 +1,60 @@
 // app/components/HeroBanner.js
 "use client";
-import 'react-datepicker/dist/react-datepicker.css'; // Still needed if you use DatePicker elsewhere or for styling
-import { useState, useEffect, useRef } from 'react';
-// import DatePicker from 'react-datepicker'; // Removed DatePicker
-import { FaSearch, FaClock, FaMapMarkerAlt, FaUsers } from 'react-icons/fa'; // Changed FaCalendarAlt to FaClock
+import 'react-datepicker/dist/react-datepicker.css';
+import { useState, useEffect, useRef } from 'react'; // Added useEffect and useRef
+import DatePicker from 'react-datepicker';
+// Changed FaListUl to FaUsers for group size icon, FaCalendarAlt for DatePicker, FaClock for Duration
+import { FaSearch, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaClock } from 'react-icons/fa';
 
+// Import your Supabase client for fetching destination suggestions
 import supabase from '../utils/supabase/client'; // Adjust path as needed
 
 export default function HeroBanner() {
-  // const [dateRange, setDateRange] = useState([null, null]); // Removed date state
-  // const [startDate, endDate] = dateRange; // Removed date state
+  // State for Date Range Picker
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
 
+  // States for Destination auto-suggestion
   const [destinationInput, setDestinationInput] = useState('');
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
-  const searchInputRef = useRef(null);
-  const suggestionsRef = useRef(null); // Ref for destination suggestions dropdown
+  const searchInputRef = useRef(null); // Ref for the destination input
+  const suggestionsRef = useRef(null); // Ref for destination suggestions dropdown container
+  const debounceTimeoutRef = useRef(null); // Ref for debouncing the suggestion fetch
 
-  // States for Group Size selection
-  const [showGroupSizeDropdown, setShowGroupSizeDropdown] = useState(false);
-  const [selectedGroupSizes, setSelectedGroupSizes] = useState([]);
-  const groupSizeDropdownRef = useRef(null);
-
-  // New states for Duration selection
-  const [selectedDurationKey, setSelectedDurationKey] = useState(''); // Stores selected duration key
+  // States for Duration selection dropdown (custom dropdown, not DatePicker)
+  const [selectedDurationKey, setSelectedDurationKey] = useState(''); // Stores selected duration key (e.g., '4-7')
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
-  const durationDropdownRef = useRef(null); // Ref for duration dropdown
-  const durationButtonRef = useRef(null); // Ref for duration button
-
-  // Debounce mechanism for destination search
-  const debounceTimeoutRef = useRef(null);
+  const durationDropdownRef = useRef(null); // Ref for duration dropdown container
+  const durationButtonRef = useRef(null); // Ref for the button that toggles duration dropdown
 
   // Group size options mapping keys to display text and range
   const groupSizeOptions = [
-    { key: 'personal', label: 'Personal (1 person)', min: 1, max: 1 },
-    { key: 'small', label: 'Small Group (2-5 people)', min: 2, max: 5 },
-    { key: 'medium', label: 'Medium Group (6-12 people)', min: 6, max: 12 },
-    { key: 'large', label: 'Large Group (13+ people)', min: 13, max: null }
+    { key: '', label: 'All group sizes' }, // Default/placeholder
+    { key: 'personal', label: 'Personal (1 person)' },
+    { key: 'small', label: 'Small Group (2-5 people)' },
+    { key: 'medium', label: 'Medium Group (6-12 people)' },
+    { key: 'large', label: 'Large Group (13+ people)' }
   ];
 
   // Duration options mapping keys to display text and range (in days)
   const durationOptions = [
-    { key: '', label: 'Any duration', min: null, max: null },
-    { key: '1-3', label: '1-3 days', min: 1, max: 3 },
-    { key: '4-7', label: '4-7 days', min: 4, max: 7 },
-    { key: '8-14', label: '8-14 days', min: 8, max: 14 },
-    { key: '15+', label: '15+ days', min: 15, max: null }
+    { key: '', label: 'Any duration' }, // Default/placeholder
+    { key: '1-3', label: '1-3 days' },
+    { key: '4-7', label: '4-7 days' },
+    { key: '8-14', label: '8-14 days' },
+    { key: '15+', label: '15+ days' }
   ];
 
   // Effect to handle clicks outside suggestions/dropdowns to close them
   useEffect(() => {
     function handleClickOutside(event) {
-      // Close destination suggestions
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target) &&
-          searchInputRef.current && !searchInputRef.current.contains(event.target)) {
+      // Close destination suggestions if click is outside input or suggestion list
+      if (searchInputRef.current && !searchInputRef.current.contains(event.target) &&
+          suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
         setShowDestinationSuggestions(false);
       }
-      // Close group size dropdown
-      if (groupSizeDropdownRef.current && !groupSizeDropdownRef.current.contains(event.target) &&
-          event.target.id !== 'groupSizeButton') {
-        setShowGroupSizeDropdown(false);
-      }
-      // Close duration dropdown
+      // Close duration dropdown if click is outside dropdown or its toggle button
       if (durationDropdownRef.current && !durationDropdownRef.current.contains(event.target) &&
           durationButtonRef.current && !durationButtonRef.current.contains(event.target)) {
         setShowDurationDropdown(false);
@@ -115,33 +108,32 @@ export default function HeroBanner() {
     }
   };
 
+  // Handle change in destination input with debouncing
   const handleDestinationChange = (e) => {
-    setDestinationInput(e.target.value);
+    const value = e.target.value;
+    setDestinationInput(value); // Update input state immediately
+
+    // Clear previous debounce timeout
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
+    // Set new debounce timeout
     debounceTimeoutRef.current = setTimeout(() => {
-      fetchSuggestions(e.target.value.toLowerCase());
-    }, 300);
+      fetchSuggestions(value.toLowerCase()); // Fetch suggestions after debounce
+    }, 300); // 300ms debounce delay
   };
 
+  // Handle click on a destination suggestion
   const handleSuggestionClick = (suggestion) => {
-    setDestinationInput(suggestion);
-    setDestinationSuggestions([]);
-    setShowDestinationSuggestions(false);
+    setDestinationInput(suggestion); // Set input value to the clicked suggestion
+    setDestinationSuggestions([]); // Clear suggestions
+    setShowDestinationSuggestions(false); // Hide suggestions
   };
 
-  const handleGroupSizeChange = (e) => {
-    const { value, checked } = e.target;
-    setSelectedGroupSizes(prev =>
-      checked ? [...prev, value] : prev.filter(size => size !== value)
-    );
-  };
-
-  // Handle duration selection
+  // Handle duration selection from the custom dropdown
   const handleDurationSelect = (key) => {
-    setSelectedDurationKey(key);
-    setShowDurationDropdown(false);
+    setSelectedDurationKey(key); // Update selected duration key
+    setShowDurationDropdown(false); // Close dropdown
   };
 
   return (
@@ -167,6 +159,7 @@ export default function HeroBanner() {
           <div className="backdrop-blur-lg bg-white/80 text-[#1A1A4B] rounded-3xl shadow-2xl max-w-6xl mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4 border border-white/30">
 
             {/* Destination with Auto-Suggestion */}
+            {/* Ref attached to the container div to handle clicks outside */}
             <div className="relative flex items-center w-full md:w-auto flex-1 gap-3" ref={searchInputRef}>
               <FaMapMarkerAlt className="text-gray-400" />
               <input
@@ -174,16 +167,18 @@ export default function HeroBanner() {
                 name="destination"
                 placeholder="Search destinations"
                 className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none"
-                value={destinationInput}
-                onChange={handleDestinationChange}
+                value={destinationInput} // Controlled component
+                onChange={handleDestinationChange} // Update state on change
+                // Show suggestions on focus if input has content (for re-opening after closing)
                 onFocus={() => destinationInput.length >= 2 && setShowDestinationSuggestions(true)}
-                autoComplete="off"
+                autoComplete="off" // Disable browser's built-in autocomplete
               />
+              {/* Suggestions dropdown */}
               {showDestinationSuggestions && destinationSuggestions.length > 0 && (
                 <ul ref={suggestionsRef} className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-20 text-gray-800 max-h-60 overflow-y-auto">
                   {destinationSuggestions.map((suggestion, index) => (
                     <li
-                      key={index}
+                      key={index} // Using index as key is okay for static lists, but unique IDs are better if available
                       className="p-2 cursor-pointer hover:bg-gray-100"
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
@@ -194,16 +189,18 @@ export default function HeroBanner() {
               )}
             </div>
 
-            {/* Duration Selector (replaces Date Range Picker) */}
+            {/* Date Range Picker (Removed DatePicker, now Duration Selector) */}
+            {/* Using a custom dropdown for Duration, sending 'durationRange' */}
             <div className="flex items-center w-full md:w-auto flex-1 gap-3 border-t md:border-t-0 md:border-l md:pl-6 border-gray-200 relative">
-              <FaClock className="text-gray-400" />
+              <FaClock className="text-gray-400" /> {/* Changed icon to FaClock */}
               <button
-                type="button"
+                type="button" // Important: type="button" to prevent form submission
                 id="durationButton"
                 ref={durationButtonRef}
-                className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none text-left text-gray-500 py-2"
-                onClick={() => setShowDurationDropdown(!showDurationDropdown)}
+                className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none text-left text-gray-700 py-2"
+                onClick={() => setShowDurationDropdown(!showDurationDropdown)} // Toggle dropdown visibility
               >
+                {/* Display label for selected duration or default */}
                 {durationOptions.find(opt => opt.key === selectedDurationKey)?.label || 'Any duration'}
               </button>
               {showDurationDropdown && (
@@ -221,24 +218,30 @@ export default function HeroBanner() {
               )}
             </div>
 
-            {/* Group Size Selection */}
+            {/* Group Size Selection (Standard Select Dropdown) */}
             <div className="flex items-center w-full md:w-auto flex-1 gap-3 border-t md:border-t-0 md:border-l md:pl-6 border-gray-200 relative">
-              <FaUsers className="text-gray-400" />
+              <FaUsers className="text-gray-400" /> {/* Icon changed to FaUsers */}
               <select
-                name="groupSize" // This is still a select, not checkboxes, based on the last HeroBanner you provided.
-                className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none"
-                defaultValue=""
+                name="groupSize" // This name will be used in page.tsx
+                className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none text-gray-700"
+                defaultValue="" // Sets the default selected option
               >
-                <option value="">All group sizes</option>
-                <option value="personal">Personal (1 person)</option>
-                <option value="small">Small Group (2-5 people)</option>
-                <option value="medium">Medium Group (6-12 people)</option>
-                <option value="large">Large Group (13+ people)</option>
+                {groupSizeOptions.map(option => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
-            {/* Hidden input for duration range */}
+            {/* Hidden input for duration range to be sent to page.tsx */}
             <input type="hidden" name="durationRange" value={selectedDurationKey} />
+
+            {/* Hidden inputs for original startDate and endDate (if still needed for other purposes, otherwise remove) */}
+            {/* These were from the DatePicker, but if DatePicker is removed, these might not be needed */}
+            {/* <input type="hidden" name="startDate" value={startDate ? startDate.toISOString() : ''} /> */}
+            {/* <input type="hidden" name="endDate" value={endDate ? endDate.toISOString() : ''} /> */}
+
 
             {/* Search Button */}
             <button
