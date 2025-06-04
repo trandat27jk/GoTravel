@@ -1,7 +1,8 @@
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server';
+import Image from 'next/image'; // Import Image component
 
 export default async function TourDetailPage(props: { params: { slug: string } }) {
-  const {slug} = props.params; // ✅ This line is critical
+  const {slug} = props.params;
 
   const supabase = await createClient();
   const { data: tour, error } = await supabase
@@ -27,19 +28,26 @@ export default async function TourDetailPage(props: { params: { slug: string } }
 
       {/* Images */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <img
-          src={tour.cover_image}
-          alt="Cover"
-          className="rounded-lg w-full h-72 md:col-span-2 object-cover"
-        />
+        <div className="relative w-full h-72 md:col-span-2"> {/* Wrapper for Image */}
+          <Image
+            src={tour.cover_image}
+            alt="Cover"
+            fill
+            className="rounded-lg object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+          />
+        </div>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
           {tour.gallery?.slice(0, 4).map((url: string, i: number) => (
-            <img
-              key={i}
-              src={url}
-              alt={`Gallery ${i}`}
-              className="rounded-lg w-full h-36 object-cover"
-            />
+            <div key={i} className="relative w-full h-36"> {/* Wrapper for Image */}
+              <Image
+                src={url}
+                alt={`Gallery ${i}`}
+                fill
+                className="rounded-lg object-cover"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -73,7 +81,7 @@ export default async function TourDetailPage(props: { params: { slug: string } }
       {/* Included */}
       {tour.included?.length > 0 && (
         <div className="mb-10">
-          <h2 className="text-xl font-semibold text-[#1A1A4B] mb-2">What's Included</h2>
+          <h2 className="text-xl font-semibold text-[#1A1A4B] mb-2">What&apos;s Included</h2> {/* Fixed unescaped apostrophe */}
           <ul className="list-disc list-inside text-gray-700">
             {tour.included.map((item: string, i: number) => (
               <li key={i}>{item}</li>
