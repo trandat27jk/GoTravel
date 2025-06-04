@@ -1,31 +1,68 @@
-// components/Footer.js
+// components/CustomerReviews.js
+"use client"; // This component uses useState, so it needs to be a client component
 import Image from 'next/image'; // Import Image component
+import { useState } from 'react'; // Import useState for interactivity
+import Link from 'next/link'; // Import Link component (though not directly used in this snippet, good practice if it might be)
 
-export default function Footer() {
+export default function CustomerReviews() {
+  const [currentReviewer, setCurrentReviewer] = useState({
+    name: 'Ali Tufan',
+    title: 'Product Manager, Apple Inc.',
+    review: 'The tours in this website are great. I had been really enjoy with my family! The team is very professional and taking care of the customers. Will surely recommend to my friend to join this company!',
+    image: '/assets/images/reviewer1.jpg',
+  });
+
+  const reviewers = [
+    { id: 1, name: 'Ali Tufan', title: 'Product Manager, Apple Inc.', review: 'The tours in this website are great. I had been really enjoy with my family! The team is very professional and taking care of the customers. Will surely recommend to my friend to join this company!', image: '/assets/images/reviewer1.jpg' },
+    { id: 2, name: 'Jane Doe', title: 'Software Engineer, Google', review: 'Absolutely fantastic experiences! The booking process was smooth, and the tours exceeded our expectations. Highly recommend GoExplore for unforgettable adventures.', image: '/assets/images/reviewer2.jpg' },
+    { id: 3, name: 'John Smith', title: 'Marketing Lead, Microsoft', review: 'GoExplore made planning our family vacation so easy. Their personalized recommendations were spot on, and the support team was incredibly helpful throughout our trip.', image: '/assets/images/reviewer3.jpg' },
+    { id: 4, name: 'Emily White', title: 'UX Designer, Adobe', review: 'The cultural tours were truly immersive. I learned so much and met wonderful people. GoExplore is my go-to for authentic travel experiences.', image: '/assets/images/reviewer4.jpg' },
+    { id: 5, name: 'Michael Brown', title: 'Data Scientist, Amazon', review: 'Efficient, reliable, and great value. The adventure tours were thrilling and well-organized. I\'m already planning my next trip with them!', image: '/assets/images/reviewer5.jpg' },
+  ];
+
+  // Removed type annotation 'reviewerId: number'
+  const handleReviewerClick = (reviewerId) => {
+    const selected = reviewers.find(r => r.id === reviewerId);
+    if (selected) {
+      setCurrentReviewer(selected);
+    }
+  };
+
   return (
-    <footer className="bg-white w-full shadow-inner mt-8">
-      <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center">
-        {/* Left: Logo and Name */}
-        <Link href="/" className="flex items-center space-x-2 mb-4 md:mb-0"> {/* Changed <div> to Link */}
-          <div className="relative w-5 h-5 flex-shrink-0"> {/* Wrapper for Image */}
-            <Image src="/assets/images/logo.png" alt="Logo" fill sizes="20px" /> {/* Use Image component */}
-          </div>
-          <span className="text-base font-semibold text-[#EB662B]">GoExplore</span>
-        </Link>
+    <section id="customer-reviews" className="py-20 bg-[#F9FAFB]">
+      <div className="text-center max-w-3xl mx-auto mb-12">
+        <h2 className="text-xl font-semibold text-[#05073C] mb-2">Customer Reviews</h2>
 
-        {/* Middle: Links */}
-        <div className="flex space-x-6 text-sm font-medium text-[#1A1A4B] mb-4 md:mb-0">
-          <a href="#">About</a>
-          <a href="#">Contact</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms</a>
-        </div>
+        {/* Font Awesome icon - ensure Font Awesome is loaded globally or use react-icons */}
+        <i className="fa-solid fa-quote-left text-[#EB662B] text-3xl"></i>
 
-        {/* Right: Copyright */}
-        <div className="text-xs text-gray-400">
-          &copy; 2024 GoExplore. All rights reserved.
+        <p className="text-gray-600 text-lg leading-relaxed font-semibold mt-4">
+          {currentReviewer.review}
+        </p>
+
+        <div className="mt-6">
+          <h4 className="text-[#05073C] font-semibold">{currentReviewer.name}</h4>
+          <p className="text-sm text-gray-500">{currentReviewer.title}</p>
         </div>
       </div>
-    </footer>
+
+      {/* Avatar Selector */}
+      <div className="flex justify-center items-center space-x-4 mt-8">
+        {reviewers.map((reviewer) => (
+          <div key={reviewer.id} className="relative w-14 h-14 rounded-full flex-shrink-0">
+            <Image
+              src={reviewer.image}
+              alt={reviewer.name}
+              fill
+              className={`rounded-full object-cover border-4 ring-2 ring-white shadow-md cursor-pointer transition ${
+                reviewer.id === currentReviewer.id ? 'border-[#EB662B] grayscale-0' : 'border-transparent grayscale hover:grayscale-0'
+              }`}
+              sizes="56px"
+              onClick={() => handleReviewerClick(reviewer.id)}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
