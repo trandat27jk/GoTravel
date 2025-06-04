@@ -1,4 +1,5 @@
 // components/TravelArticles.js
+import Image from 'next/image'; // Import Image component
 
 export default function TravelArticles() {
   return (
@@ -11,11 +12,15 @@ export default function TravelArticles() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Article 1 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <img
-              src="/assets/images/travelling.jpg"
-              alt="Article 1"
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+              <Image
+                src="/assets/images/travelling.jpg"
+                alt="Article 1"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <div className="p-4">
               <h4 className="font-medium text-lg mb-2">10 Tips for Traveling on a Budget</h4>
               <p className="text-gray-500 text-sm">
@@ -29,11 +34,15 @@ export default function TravelArticles() {
 
           {/* Article 2 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <img
-              src="/assets/images/adventure.jpg"
-              alt="Article 2"
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+              <Image
+                src="/assets/images/adventure.jpg"
+                alt="Article 2"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <div className="p-4">
               <h4 className="font-medium text-lg mb-2">
                 Top 5 Destinations for Adventure Seekers
@@ -49,15 +58,19 @@ export default function TravelArticles() {
 
           {/* Article 3 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <img
-              src="/assets/images/cultural.jpg"
-              alt="Article 3"
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+              <Image
+                src="/assets/images/cultural.jpg"
+                alt="Article 3"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <div className="p-4">
               <h4 className="font-medium text-lg mb-2">Cultural Etiquette Around the World</h4>
               <p className="text-gray-500 text-sm">
-                Learn about the dos and don'ts when visiting different countries.
+                Learn about the dos and don&apos;ts when visiting different countries. {/* Fixed unescaped apostrophe */}
               </p>
               <a href="#" className="text-orange-500 hover:underline">
                 Read More

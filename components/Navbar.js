@@ -29,6 +29,7 @@ export default function Navigation() {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-[#1A1A4B]">
           <Link href="/destinations" className="hover:text-[#EB662B]">Destinations</Link>
+          {/* Consider replacing '#' with actual routes or using <a> if purely external/placeholder */}
           <Link href="#" className="hover:text-[#EB662B]">Activities</Link>
           <Link href="#" className="hover:text-[#EB662B]">USD</Link>
           <Link href="#" className="hover:text-[#EB662B]">Sign up</Link>
@@ -48,6 +49,7 @@ export default function Navigation() {
           <Link href="/destinations" onClick={() => setIsOpen(false)} className="block hover:text-[#EB662B]">
             Destinations
           </Link>
+          {/* Consider replacing '#' with actual routes or using <a> if purely external/placeholder */}
           <Link href="#" onClick={() => setIsOpen(false)} className="block hover:text-[#EB662B]">
             Activities
           </Link>

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import Link from 'next/link'; // Added Link import for breadcrumb and view details
 
 const destinations = [
   {
@@ -91,8 +92,9 @@ export default function DestinationsPage() {
     <main className="max-w-7xl mx-auto px-6 py-10 bg-gray-50 text-[#1A1A4B]">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500 mb-6">
-        <a href="/" className="hover:underline">Home</a> &gt;{' '}
-        <a href="#" className="hover:underline">Tours</a> &gt; Phuket
+        <Link href="/" className="hover:underline">Home</Link> &gt;{' '}
+        {/* Changed <a> to Link for internal navigation */}
+        <Link href="/destinations" className="hover:underline">Tours</Link> &gt; Phuket {/* Assuming Phuket is a specific page or dynamic route */}
       </nav>
 
       {/* Title and Sort */}
@@ -160,6 +162,7 @@ export default function DestinationsPage() {
                   alt={place.title}
                   fill
                   className="object-cover rounded-md"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Added sizes for optimization
                 />
                 <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded">
                   {place.discount}
@@ -185,12 +188,13 @@ export default function DestinationsPage() {
                   <p className="text-xs text-gray-400 line-through">{place.originalPrice}</p>
                   <p className="text-[#1A1A4B] font-semibold">From {place.price}</p>
                 </div>
-                <a
+                {/* Changed <a> to Link for internal navigation */}
+                <Link
                   href={place.link}
                   className="mt-4 px-4 py-2 rounded-lg border border-[#EB662B] text-[#EB662B] hover:bg-[#EB662B] hover:text-white transition duration-200"
                 >
                   View Details
-                </a>
+                </Link>
               </div>
             </div>
           ))}
