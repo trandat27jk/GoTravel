@@ -1,40 +1,31 @@
-// components/CustomerReviews.js
+// components/Footer.js
+import Image from 'next/image'; // Import Image component
 
-export default function CustomerReviews() {
+export default function Footer() {
   return (
-    <section id="customer-reviews" className="py-20 bg-[#F9FAFB]">
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <h2 className="text-xl font-semibold text-[#05073C] mb-2">Customer Reviews</h2>
+    <footer className="bg-white w-full shadow-inner mt-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center">
+        {/* Left: Logo and Name */}
+        <Link href="/" className="flex items-center space-x-2 mb-4 md:mb-0"> {/* Changed <div> to Link */}
+          <div className="relative w-5 h-5 flex-shrink-0"> {/* Wrapper for Image */}
+            <Image src="/assets/images/logo.png" alt="Logo" fill sizes="20px" /> {/* Use Image component */}
+          </div>
+          <span className="text-base font-semibold text-[#EB662B]">GoExplore</span>
+        </Link>
 
-        <i className="fa-solid fa-quote-left text-[#EB662B] text-3xl"></i>
+        {/* Middle: Links */}
+        <div className="flex space-x-6 text-sm font-medium text-[#1A1A4B] mb-4 md:mb-0">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+        </div>
 
-        <p className="text-gray-600 text-lg leading-relaxed font-semibold mt-4">
-          The tours in this website are great. I had been really enjoy with my family! The team is very
-          professional and taking care of the customers. Will surely recommend to my friend to join this company!
-        </p>
-
-        <div className="mt-6">
-          <h4 className="text-[#05073C] font-semibold">Ali Tufan</h4>
-          <p className="text-sm text-gray-500">Product Manager, Apple Inc.</p>
+        {/* Right: Copyright */}
+        <div className="text-xs text-gray-400">
+          &copy; 2024 GoExplore. All rights reserved.
         </div>
       </div>
-
-      {/* Avatar Selector */}
-      <div className="flex justify-center items-center space-x-4 mt-8">
-        <img
-          src="/assets/images/reviewer1.jpg"
-          alt="Ali Tufan"
-          className="w-14 h-14 rounded-full border-4 border-[#EB662B] ring-2 ring-white shadow-md"
-        />
-        {[2, 3, 4, 5].map((num) => (
-          <img
-            key={num}
-            src={`/assets/images/reviewer${num}.jpg`}
-            alt={`Avatar ${num}`}
-            className="w-12 h-12 rounded-full grayscale hover:grayscale-0 cursor-pointer transition"
-          />
-        ))}
-      </div>
-    </section>
+    </footer>
   );
 }

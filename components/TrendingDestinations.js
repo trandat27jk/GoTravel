@@ -1,4 +1,19 @@
+// components/TrendingDestinations.js
+import Image from 'next/image'; // Import Image component
+import Link from 'next/link'; // Assuming Link is used for navigation
+
 export default function TrendingDestinations() {
+  const destinations = [
+    { name: "Paris", image: "/assets/images/paris.jpg", tours: "100+ Tours" },
+    { name: "Singapore", image: "/assets/images/singapore.jpg", tours: "300+ Tours" },
+    { name: "Roma", image: "/assets/images/roma.jpg", tours: "400+ Tours" },
+    { name: "Bangkok", image: "/assets/images/bangkok.jpg", tours: "100+ Tours" },
+    { name: "Hanoi", image: "/assets/images/hanoi.jpg", tours: "600+ Tours" },
+    { name: "Phuket", image: "/assets/images/phuket.jpg", tours: "200+ Tours" },
+    { name: "Tokyo", image: "/assets/images/tokyo.jpg", tours: "700+ Tours" },
+    { name: "Hoian", image: "/assets/images/hoian.jpg", tours: "900+ Tours" },
+  ];
+
   return (
     <section id="trending-destinations" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -15,11 +30,15 @@ export default function TrendingDestinations() {
               key={index}
               className="flex flex-col items-center text-center transition duration-300 transform hover:-translate-y-1 hover:shadow-xl"
             >
-              <img
-                src={destination.image}
-                alt={destination.name}
-                className="rounded-full w-28 h-28 object-cover mb-4 shadow transition-transform duration-300 hover:scale-105"
-              />
+              <div className="relative w-28 h-28 mb-4"> {/* Wrapper for Image with fill */}
+                <Image
+                  src={destination.image}
+                  alt={destination.name}
+                  fill // Use fill to make image cover parent div
+                  className="rounded-full object-cover shadow transition-transform duration-300 hover:scale-105"
+                  sizes="100px" // Provide a size for optimization
+                />
+              </div>
               <h4 className="text-md font-semibold text-[#1A1A4B]">{destination.name}</h4>
               <p className="text-sm text-gray-600">{destination.tours}</p>
             </div>
@@ -36,14 +55,3 @@ export default function TrendingDestinations() {
     </section>
   );
 }
-
-const destinations = [
-  { name: "Paris", image: "/assets/images/paris.jpg", tours: "100+ Tours" },
-  { name: "Singapore", image: "/assets/images/singapore.jpg", tours: "300+ Tours" },
-  { name: "Roma", image: "/assets/images/roma.jpg", tours: "400+ Tours" },
-  { name: "Bangkok", image: "/assets/images/bangkok.jpg", tours: "100+ Tours" },
-  { name: "Hanoi", image: "/assets/images/hanoi.jpg", tours: "600+ Tours" },
-  { name: "Phuket", image: "/assets/images/phuket.jpg", tours: "200+ Tours" },
-  { name: "Tokyo", image: "/assets/images/tokyo.jpg", tours: "700+ Tours" },
-  { name: "Hoian", image: "/assets/images/hoian.jpg", tours: "900+ Tours" },
-];
