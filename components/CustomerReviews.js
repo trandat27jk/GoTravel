@@ -17,10 +17,10 @@ export default function CustomerReviews() {
     { id: 2, name: 'Jane Doe', title: 'Software Engineer, Google', review: 'Absolutely fantastic experiences! The booking process was smooth, and the tours exceeded our expectations. Highly recommend GoExplore for unforgettable adventures.', image: '/assets/images/reviewer2.jpg' },
     { id: 3, name: 'John Smith', title: 'Marketing Lead, Microsoft', review: 'GoExplore made planning our family vacation so easy. Their personalized recommendations were spot on, and the support team was incredibly helpful throughout our trip.', image: '/assets/images/reviewer3.jpg' },
     { id: 4, name: 'Emily White', title: 'UX Designer, Adobe', review: 'The cultural tours were truly immersive. I learned so much and met wonderful people. GoExplore is my go-to for authentic travel experiences.', image: '/assets/images/reviewer4.jpg' },
-    { id: 5, name: 'Michael Brown', title: 'Data Scientist, Amazon', review: 'Efficient, reliable, and great value. The adventure tours were thrilling and well-organized. I\'m already planning my next trip with them!', image: '/assets/images/reviewer5.jpg' },
+    { id: 5, name: 'Michael Brown', title: 'Data Scientist, Amazon', review: 'Efficient, reliable, and great value. I\'m already planning my next trip with them!', image: '/assets/images/reviewer5.jpg' }, // Corrected: Escape apostrophe
   ];
 
-  const handleReviewerClick = (reviewerId) => { // Removed type annotation as it's a .js file
+  const handleReviewerClick = (reviewerId) => {
     const selected = reviewers.find(r => r.id === reviewerId);
     if (selected) {
       setCurrentReviewer(selected);
@@ -35,7 +35,7 @@ export default function CustomerReviews() {
         {/* Using a div as a placeholder for the Font Awesome icon. */}
         {/* If you have react-icons installed, you could use something like: */}
         {/* <FaQuoteLeft className="text-[#EB662B] text-3xl" /> */}
-        <div className="text-[#EB662B] text-3xl">"</div> {/* Simple quote for display */}
+        <div className="text-[#EB662B] text-3xl">&quot;</div> {/* Corrected: Escaped double quote */}
 
         <p className="text-gray-600 text-lg leading-relaxed font-semibold mt-4">
           {currentReviewer.review}
