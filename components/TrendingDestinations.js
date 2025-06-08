@@ -1,56 +1,148 @@
 // components/TrendingDestinations.js
-import Image from 'next/image'; // Import Image component
-import Link from 'next/link'; // Assuming Link is used for navigation
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import supabase from "../utils/supabase/client";
+
+const DESTINATIONS_PER_PAGE = 8;
 
 export default function TrendingDestinations() {
-  const destinations = [
-    { name: "Paris", image: "/assets/images/paris.jpg", tours: "100+ Tours" },
-    { name: "Singapore", image: "/assets/images/singapore.jpg", tours: "300+ Tours" },
-    { name: "Roma", image: "/assets/images/roma.jpg", tours: "400+ Tours" },
-    { name: "Bangkok", image: "/assets/images/bangkok.jpg", tours: "100+ Tours" },
-    { name: "Hanoi", image: "/assets/images/hanoi.jpg", tours: "600+ Tours" },
-    { name: "Phuket", image: "/assets/images/phuket.jpg", tours: "200+ Tours" },
-    { name: "Tokyo", image: "/assets/images/tokyo.jpg", tours: "700+ Tours" },
-    { name: "Hoian", image: "/assets/images/hoian.jpg", tours: "900+ Tours" },
-  ];
+  const [allTrendingDestinations, setAllTrendingDestinations] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch all trending destinations once on mount
+  useEffect(() => {
+    async function fetchTrendingDestinations() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data: tours, error: fetchError } = await supabase
+          .from("tours")
+          .select("id, province, country, slug, cover_image, gallery");
+
+        if (fetchError) throw fetchError;
+
+        // Aggregate by province+country
+        const destinationData = {};
+        tours.forEach((tour) => {
+          const key = `${tour.province}, ${tour.country}`;
+          if (!destinationData[key]) {
+            let representativeImage = "/assets/images/placeholder.jpg";
+            if (tour.cover_image && typeof tour.cover_image === "string" && tour.cover_image.trim() !== "") {
+              representativeImage = tour.cover_image;
+            } else if (
+              Array.isArray(tour.gallery) &&
+              tour.gallery.length > 0 &&
+              typeof tour.gallery[0] === "string" &&
+              tour.gallery[0].trim() !== ""
+            ) {
+              representativeImage = tour.gallery[0];
+            }
+            destinationData[key] = {
+              name: tour.province,
+              location: `${tour.province}, ${tour.country}`,
+              tourCount: 0,
+              slug: tour.slug || "#",
+              image: representativeImage,
+            };
+          }
+          destinationData[key].tourCount++;
+        });
+
+        const sortedDestinations = Object.values(destinationData).sort(
+          (a, b) => b.tourCount - a.tourCount
+        );
+        setAllTrendingDestinations(sortedDestinations);
+      } catch (err) {
+        setError(err.message || "Failed to load destinations");
+        setAllTrendingDestinations([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTrendingDestinations();
+  }, []);
+
+  // Pagination logic
+  const startIndex = currentPage * DESTINATIONS_PER_PAGE;
+  const endIndex = startIndex + DESTINATIONS_PER_PAGE;
+  const destinationsToDisplay = allTrendingDestinations.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allTrendingDestinations.length / DESTINATIONS_PER_PAGE);
+
+  // UI for loading/error/no data
+  if (loading) {
+    return (
+      <section className="py-20 bg-white text-center">
+        <p className="text-xl text-gray-700">Loading trending destinations...</p>
+      </section>
+    );
+  }
+  if (error) {
+    return (
+      <section className="py-20 bg-white text-center">
+        <p className="text-xl text-red-600">Error: {error}</p>
+        <p className="text-md text-gray-500 mt-2">Could not load trending destinations.</p>
+      </section>
+    );
+  }
+  if (allTrendingDestinations.length === 0) {
+    return (
+      <section className="py-20 bg-white text-center">
+        <p className="text-xl text-gray-700">No trending destinations found.</p>
+      </section>
+    );
+  }
 
   return (
-    <section id="trending-destinations" className="py-20 bg-white">
+    <section className="py-20 bg-white" id="trending-destinations">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-3xl font-bold text-[#1A1A4B]">Trending destinations</h2>
-          <a href="#" className="text-sm font-medium text-[#1A1A4B] hover:underline">
+          <Link href="/destinations" className="text-sm font-medium text-[#1A1A4B] hover:underline">
             See all
-          </a>
+          </Link>
         </div>
 
         <div className="flex flex-wrap justify-center gap-8">
-          {destinations.map((destination, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center transition duration-300 transform hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div className="relative w-28 h-28 mb-4"> {/* Wrapper for Image with fill */}
-                <Image
-                  src={destination.image}
-                  alt={destination.name}
-                  fill // Use fill to make image cover parent div
-                  className="rounded-full object-cover shadow transition-transform duration-300 hover:scale-105"
-                  sizes="100px" // Provide a size for optimization
-                />
+          {destinationsToDisplay.map((destination, idx) => (
+            <Link href={`/tour_details/${destination.slug}`} key={idx}>
+              <div className="flex flex-col items-center text-center transition duration-300 transform hover:-translate-y-1 hover:shadow-xl cursor-pointer">
+                <div className="relative w-28 h-28 mb-4">
+                  <Image
+                    src={destination.image}
+                    alt={destination.name}
+                    fill
+                    className="rounded-full object-cover shadow transition-transform duration-300 hover:scale-105"
+                    sizes="112px"
+                    // Only the FIRST page images get `priority`
+                    priority={currentPage === 0}
+                  />
+                </div>
+                <h4 className="text-md font-semibold text-[#1A1A4B]">{destination.name}</h4>
+                <p className="text-sm text-gray-600">{destination.tourCount} Tours</p>
               </div>
-              <h4 className="text-md font-semibold text-[#1A1A4B]">{destination.name}</h4>
-              <p className="text-sm text-gray-600">{destination.tours}</p>
-            </div>
+            </Link>
           ))}
         </div>
 
-        <div className="flex justify-center mt-10 space-x-2">
-          <span className="h-2 w-6 rounded-full" style={{ backgroundColor: "#05073C" }}></span>
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "rgba(5, 7, 60, 0.5)" }}></span>
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "rgba(5, 7, 60, 0.5)" }}></span>
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "rgba(5, 7, 60, 0.5)" }}></span>
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-10 space-x-2">
+            {[...Array(totalPages)].map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-2 rounded-full cursor-pointer transition-all duration-300 ${
+                  idx === currentPage ? "w-6 bg-[#05073C]" : "w-2 bg-gray-300 hover:bg-gray-400"
+                }`}
+                onClick={() => setCurrentPage(idx)}
+              ></span>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

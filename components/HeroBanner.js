@@ -101,24 +101,6 @@ export default function HeroBanner() {
     }
   };
 
-  useEffect(() => { // This useEffect depends on destinationInput, which is correct
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    debounceTimeoutRef.current = setTimeout(() => {
-      handleDestinationChange({ target: { value: destinationInput } }); // Pass the current input value
-    }, 300);
-
-    // No need for this cleanup in the original code, as the timeout is managed by debounceTimeoutRef
-    // and handleDestinationChange itself is what triggers fetching.
-    // The previous structure had the fetchSuggestions directly in this effect, but now it's in handleDestinationChange.
-    // The lint warning was likely related to an earlier iteration or misunderstanding.
-    // As per the provided HeroBanner.js, the fetchSuggestions call is inside handleDestinationChange.
-    // The useEffect here is primarily for debouncing the onChange handler.
-    // To strictly resolve the lint, let's simplify this useEffect
-  }, [destinationInput]); // Re-run effect when destinationInput changes
-
-  // Simpler useEffect for debouncing the fetchSuggestions call
   useEffect(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -189,13 +171,14 @@ export default function HeroBanner() {
                 autoComplete="off"
               />
               {showDestinationSuggestions && destinationSuggestions.length > 0 && (
-                <ul ref={suggestionsRef} className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-20 text-gray-800 max-h-60 overflow-y-auto">
+                <ul ref={suggestionsRef} className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-xl shadow-lg mt-1 z-20 text-gray-800 max-h-60 overflow-y-auto">
                   {destinationSuggestions.map((suggestion, index) => (
                     <li
                       key={index}
-                      className="p-2 cursor-pointer hover:bg-gray-100"
+                      className="p-3 cursor-pointer hover:bg-gray-100 flex items-center gap-2 text-sm text-gray-700 hover:text-[#EB662B] transition duration-150 ease-in-out"
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
+                      <FaMapMarkerAlt className="text-gray-400 text-xs" /> {/* Small icon next to each suggestion */}
                       {suggestion}
                     </li>
                   ))}
@@ -243,6 +226,9 @@ export default function HeroBanner() {
                 ))}
               </select>
             </div>
+
+            <input type="hidden" name="startDate" value={startDate ? startDate.toISOString() : ''} />
+            <input type="hidden" name="endDate" value={endDate ? endDate.toISOString() : ''} />
 
             <input type="hidden" name="durationRange" value={selectedDurationKey} />
 

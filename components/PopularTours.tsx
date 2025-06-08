@@ -4,7 +4,7 @@
 import Link from "next/link";
 import Image from "next/image"; // Import Image component for optimized images
 import { createClient } from '@/utils/supabase/server'; // Import the server-side Supabase client
-import { FaImage } from 'react-icons/fa'; // Import FaImage for fallback
+import { FaImage, FaStar } from 'react-icons/fa'; // Import FaImage for fallback, FaStar for rating stars
 
 // Define the type for a Tour item, consistent with your database schema
 interface TourItem {
@@ -13,8 +13,8 @@ interface TourItem {
   title: string;
   province: string; // Assuming location is split into province and country
   country: string;
-  rating?: string; // Optional, if you have a rating column
-  duration: string; // Text duration like "4 days"
+  rating?: number; // OPTIMIZED: Assumed to be number for star display
+  duration: number; // OPTIMIZED: Assumed to be number for clarity
   price: number;
   cover_image?: string; // Changed from cover_img_gallery to cover_image (singular)
 }
@@ -26,7 +26,7 @@ export default async function PopularTours() {
   const { data: tours, error } = await supabase
     .from('tours')
     // Changed select to include 'cover_image' instead of 'cover_img_gallery'
-    .select('id, slug, title, province, country, rating, duration, price, cover_image')
+    .select('id, slug, title, province, country, rating, duration, price, cover_image') // Ensure duration is fetched correctly
     .limit(8); // Fetch 8 popular tours for the 4-column layout (2 rows of 4)
 
   if (error) {
@@ -83,9 +83,27 @@ export default async function PopularTours() {
                   <h4 className="text-base font-semibold text-[#1A1A4B] mb-2 line-clamp-2"> {/* Added line-clamp-2 for title truncation */}
                     {tour.title}
                   </h4>
-                  {tour.rating && <p className="text-sm text-gray-500 mb-2">{tour.rating}</p>}
+                  {/* --- IMPROVED CLARITY FOR RATING --- */}
+                  {tour.rating !== undefined && ( // Check if rating exists
+                    <p className="text-sm text-gray-500 mb-2 flex items-center">
+                      <span className="font-bold text-[#1A1A4B] mr-1">{tour.rating.toFixed(1)}</span> {/* Display one decimal place */}
+                      {/* Display stars based on rating value */}
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={`w-3 h-3 ${i < Math.floor(tour.rating as number) ? 'text-yellow-500' : 'text-gray-300'}`}
+                        />
+                      ))}
+                      <span className="ml-1 text-gray-500 text-xs">Rating</span> {/* Add clear "Rating" label */}
+                    </p>
+                  )}
+                  {/* --- IMPROVED CLARITY FOR DURATION --- */}
                   <div className="flex justify-between text-sm font-medium text-[#1A1A4B] mt-auto"> {/* mt-auto to push to bottom */}
-                    <span>{tour.duration}</span>
+                    <span>
+                      {typeof tour.duration === 'number'
+                        ? `${tour.duration} day${tour.duration === 1 ? '' : 's'}`
+                        : tour.duration}
+                    </span>
                     <span>
                       From <span className="font-bold">${tour.price}</span>
                     </span>
