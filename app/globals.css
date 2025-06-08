@@ -4,26 +4,44 @@
 
 
 :root {
-  --background: #ffffff;
+  /* These still define the theme colors, but we'll override base body/html background */
+  --background: #ffffff; /* Mặc định cho theme sáng */
   --foreground: #171717;
 }
 
+/* Đây là một cấu trúc @theme inline, có thể không chuẩn Tailwind/CSS thông thường */
+/* Nếu bạn sử dụng PostCSS plugins cho @theme, hãy đảm bảo chúng hoạt động */
+/* Nếu không, hãy xem xét gỡ bỏ @theme inline */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* font-sans và font-mono có thể cần import từ next/font nếu bạn dùng Geists */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0a; /* Dark mode background color */
+    --foreground: #ededed; /* Dark mode foreground color */
   }
+  /* Optional: You might want to apply dark mode background/foreground to specific elements */
+  /* For example, if you want *some* components to strictly follow dark mode */
+  /* But for the main site background, we're fixing it to light gray */
 }
 
+/* ĐẢM BẢO HTML VÀ BODY CÓ MÀU NỀN MÀU XÁM NHẠT CỦA BẠN */
+/* Đây là nơi khắc phục vấn đề viền đen và đảm bảo tính nhất quán màu nền */
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Cố định màu nền toàn cục của trang thành Tailwind's bg-gray-50 (#F9FAFB) */
+  /* Điều này đảm bảo nền luôn nhất quán, không thay đổi theo dark mode cho background chính */
+  background-color: #F9FAFB; /* Mã hex của bg-gray-50 */
+  color: var(--foreground); /* Màu chữ vẫn thay đổi theo dark mode */
+  font-family: Arial, Helvetica, sans-serif; /* Đảm bảo font được đặt */
 }
+
+/* Nếu bạn muốn các phần tử khác cũng chuyển sang màu tối trong dark mode, */
+/* bạn sẽ cần áp dụng các class Tailwind dark mode (ví dụ: dark:bg-gray-900) */
+/* cho từng component hoặc section riêng lẻ, thay vì dựa vào biến CSS toàn cục */
+
