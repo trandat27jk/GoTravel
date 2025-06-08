@@ -16,15 +16,15 @@ export default function Navigation() {
           <span className="text-base font-semibold text-[#EB662B]">GoExplore</span>
         </Link>
 
-        {/* Hamburger button for small screens */}
         <button
-          className="md:hidden text-[#1A1A4B] focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
+  className="md:hidden text-[#1A1A4B] focus:outline-none"
+  onClick={() => setIsOpen(!isOpen)}
+  aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} // Added aria-label
+>
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-[#1A1A4B]">
