@@ -97,7 +97,7 @@ export default function TourReviews({ tourId, reviewsVersion }: { tourId: string
       ) : (
         <div className="space-y-8"> {/* Increased space between review cards */}
           {reviews.map((review) => (
-            <div key={review.id} className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-1 duration-300">
+            <div key={review.id} className="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-gray-100 transform transition-transform hover:-translate-y-1 duration-300"> {/* Changed shadow-lg to shadow-md */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center">
                   <div className="w-14 h-14 rounded-full bg-[#1A1A4B] flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md flex-shrink-0">
@@ -125,15 +125,6 @@ export default function TourReviews({ tourId, reviewsVersion }: { tourId: string
               )}
               
               <p className="text-gray-700 leading-relaxed text-base mb-4">{review.review_text}</p>
-
-              <div className="flex space-x-4 text-sm text-gray-600 font-medium">
-                <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                  <span className="mr-1">👍</span> Helpful
-                </button>
-                <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                  <span className="mr-1">👎</span> Not helpful
-                </button>
-              </div>
             </div>
           ))}
         </div>
