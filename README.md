@@ -50,8 +50,6 @@ A dedicated page for each tour, offering in-depth information.
 
 ## Screenshots
 
-*(Placeholder for screenshots of your GoExplore website. You should add actual images here once your UI is ready.)*
-
 
 * **Homepage:** [![Homepage Screenshot](https://github.com/user-attachments/assets/4b0df758-380b-4e60-a392-67a52886d160)](https://go-explore-your-vercel-app.vercel.app/)
 
