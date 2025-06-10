@@ -2,10 +2,15 @@
 "use client"; // This is a client component to handle interactivity
 
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react'; // Added Suspense import
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaImage, FaMagic } from 'react-icons/fa';
+import { FaImage } from 'react-icons/fa'; // Removed FaMagic as it was not used
+
+// CORRECT IMPORT: Import the named function createClient directly
+// We no longer need the dynamic import inside useEffect because createClient() is now a simple function call.
+import { createClient } from '../../utils/supabase/client';
+
 
 // Define the type for a Tour item, consistent with your database schema
 interface Tour {
@@ -74,86 +79,85 @@ function SearchResultsContent() {
   ];
 
   useEffect(() => {
-    // Dynamic import for Supabase client is necessary inside a Client Component's useEffect
-    // to avoid bundling server-only code (like createClient) into the client bundle,
-    // which can happen even with "use client" if not careful.
-    // Assuming '../../utils/supabase/client' exports a client-side Supabase instance.
-    import('../../utils/supabase/client').then(({ default: supabaseClient }) => {
-      async function fetchSearchResults() {
-        setLoading(true);
-        setNoResults(false);
-        setResults([]);
+    // Initialize the Supabase client here, as it's a client component.
+    // Since `createClient` is now a regular named export function,
+    // we can call it directly without a dynamic import inside useEffect.
+    const supabase = createClient(); 
 
-        let query = supabaseClient.from('tours').select('*'); // Use the dynamically imported client
+    async function fetchSearchResults() {
+      setLoading(true);
+      setNoResults(false);
+      setResults([]);
 
-        // --- Apply Filters ---
+      let query = supabase.from('tours').select('*'); // Use the correctly initialized supabase
 
-        // 1. Destination Filter
-        if (destinationQuery) {
-          const searchText = destinationQuery.trim().toLowerCase();
-          query = query.or(
-            `title.ilike.%${searchText}%,description.ilike.%${searchText}%,province.ilike.%${searchText}%,country.ilike.%${searchText}%,slug.ilike.%${searchText}%`
-          );
-          console.log('Applying Destination Filter:', `title.ilike.%${searchText}%,...`);
-        }
+      // --- Apply Filters ---
 
-        // 2. Duration Filter (assumes 'duration' is numeric in DB based on your Tour interface)
-        if (selectedDurationKey && selectedDurationKey !== '') {
-          const durationOption = durationOptions.find(opt => opt.key === selectedDurationKey);
-
-          if (durationOption && (durationOption.min !== null || durationOption.max !== null)) {
-            if (durationOption.max === null) {
-              query = query.gte('duration', durationOption.min);
-              console.log(`Applying Duration Filter: duration >= ${durationOption.min}`);
-            } else {
-              query = query.gte('duration', durationOption.min).lte('duration', durationOption.max);
-              console.log(`Applying Duration Filter: duration between ${durationOption.min} and ${durationOption.max}`);
-            }
-          } else {
-            console.warn(`Unknown or invalid duration key received: ${selectedDurationKey}`);
-          }
-        }
-
-        // 3. Group Size Filter
-        if (selectedGroupSizeKey && selectedGroupSizeKey !== '') {
-          const option = groupSizeOptions.find(o => o.key === selectedGroupSizeKey);
-
-          if (option && (option.min !== null || option.max !== null)) {
-            if (option.max === null) {
-              query = query.gte('group_size', option.min);
-              console.log(`Applying Group Size Filter: group_size >= ${option.min}`);
-            } else {
-              query = query.gte('group_size', option.min).lte('group_size', option.max);
-              console.log(`Applying Group Size Filter: group_size between ${option.min} and ${option.max}`);
-            }
-          } else {
-            console.warn(`Unknown or invalid group size key received: ${selectedGroupSizeKey}`);
-          }
-        }
-
-        // 4. Tour Type Filter (using highlights array)
-        if (tourTypeQuery && tourTypeQuery !== 'all tours') {
-          query = query.filter('highlights', 'cs', `{${tourTypeQuery}}`);
-          console.log(`Applying Tour Type Filter (highlights): highlights contains '${tourTypeQuery}'`);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('Error fetching search results from Supabase:', error);
-          setResults([]);
-          setNoResults(true);
-        } else {
-          setResults(data as Tour[]);
-          if (data.length === 0) {
-            setNoResults(true);
-          }
-        }
-        setLoading(false);
+      // 1. Destination Filter
+      if (destinationQuery) {
+        const searchText = destinationQuery.trim().toLowerCase();
+        query = query.or(
+          `title.ilike.%${searchText}%,description.ilike.%${searchText}%,province.ilike.%${searchText}%,country.ilike.%${searchText}%,slug.ilike.%${searchText}%`
+        );
+        console.log(`Applying Destination Filter: title.ilike.%${searchText}%,...`);
       }
-      fetchSearchResults();
-    });
-  }, [destinationQuery, selectedDurationKey, selectedGroupSizeKey, tourTypeQuery]); // REMOVED: durationOptions and groupSizeOptions from dependencies
+
+      // 2. Duration Filter (assumes 'duration' is numeric in DB based on your Tour interface)
+      if (selectedDurationKey && selectedDurationKey !== '') {
+        const durationOption = durationOptions.find(opt => opt.key === selectedDurationKey);
+
+        if (durationOption && (durationOption.min !== null || durationOption.max !== null)) {
+          if (durationOption.max === null) {
+            query = query.gte('duration', durationOption.min);
+            console.log(`Applying Duration Filter: duration >= ${durationOption.min}`);
+          } else {
+            query = query.gte('duration', durationOption.min).lte('duration', durationOption.max);
+            console.log(`Applying Duration Filter: duration between ${durationOption.min} and ${durationOption.max}`);
+          }
+        } else {
+          console.warn(`Unknown or invalid duration key received: ${selectedDurationKey}`);
+        }
+      }
+
+      // 3. Group Size Filter
+      if (selectedGroupSizeKey && selectedGroupSizeKey !== '') {
+        const option = groupSizeOptions.find(o => o.key === selectedGroupSizeKey);
+
+        if (option && (option.min !== null || option.max !== null)) {
+          if (option.max === null) {
+            query = query.gte('group_size', option.min);
+            console.log(`Applying Group Size Filter: group_size >= ${option.min}`);
+          } else {
+            query = query.gte('group_size', option.min).lte('group_size', option.max);
+            console.log(`Applying Group Size Filter: group_size between ${option.min} and ${option.max}`);
+          }
+        } else {
+          console.warn(`Unknown or invalid group size key received: ${selectedGroupSizeKey}`);
+        }
+      }
+
+      // 4. Tour Type Filter (using highlights array)
+      if (tourTypeQuery && tourTypeQuery !== 'all tours') {
+        query = query.filter('highlights', 'cs', `{${tourTypeQuery}}`);
+        console.log(`Applying Tour Type Filter (highlights): highlights contains '${tourTypeQuery}'`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching search results from Supabase:', error);
+        setResults([]);
+        setNoResults(true);
+      } else {
+        setResults(data as Tour[]);
+        if (data.length === 0) {
+          setNoResults(true);
+        }
+      }
+      setLoading(false);
+    }
+    fetchSearchResults();
+  }, [destinationQuery, selectedDurationKey, selectedGroupSizeKey, tourTypeQuery]);
 
   const headerText = [
     destinationQuery && `Destination: "${destinationQuery}"`,

@@ -1,7 +1,7 @@
 // components/TourReviewsSection.js
 "use client";
 import { useState } from 'react';
-import TourReviews from './TourReviews'; // Adjust path as needed
+import TourReviews from './TourReviews.tsx'; // Adjust path as needed
 import TourReviewForm from './TourReviewForm'; // Adjust path as needed
 
 export default function TourReviewsSection({ tourId }) { // Changed back to tourId

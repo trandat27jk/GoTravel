@@ -5,8 +5,9 @@ import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import { FaSearch, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaClock } from 'react-icons/fa';
 
-import supabase from '../utils/supabase/client'; // Adjust path as needed
+import {createClient} from '../utils/supabase/client'; // Adjust path as needed
 
+const supabase = createClient();
 export default function HeroBanner() {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
@@ -163,7 +164,7 @@ export default function HeroBanner() {
               <input
                 type="text"
                 name="destination"
-                placeholder="Search destinations"
+                placeholder="Search tours"
                 className="w-full bg-transparent border-none text-sm placeholder-gray-500 focus:outline-none"
                 value={destinationInput}
                 onChange={handleDestinationChange}

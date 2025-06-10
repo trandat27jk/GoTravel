@@ -17,18 +17,18 @@ export default function Navigation() {
         </Link>
 
         <button
-  className="md:hidden text-[#1A1A4B] focus:outline-none"
-  onClick={() => setIsOpen(!isOpen)}
-  aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} // Added aria-label
->
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
-</button>
+          className="md:hidden text-[#1A1A4B] focus:outline-none"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} // Added aria-label
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-[#1A1A4B]">
-          <Link href="/destinations" className="hover:text-[#EB662B]">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[#EB662B]">Tours</Link>
           {/* Consider replacing '#' with actual routes or using <a> if purely external/placeholder */}
           <Link href="#" className="hover:text-[#EB662B]">Activities</Link>
           <Link href="#" className="hover:text-[#EB662B]">USD</Link>
