@@ -3,10 +3,7 @@
 Welcome to **GoExplore**, a dynamic travel platform designed to connect adventurers with unforgettable experiences worldwide. From breathtaking landscapes to vibrant cultural immersions, GoExplore helps users discover, book, and review their dream trips with ease.
 
 ## Team Members
-
-* **Trần Anh Trung** - 22090002
-* **Phan Nhất Việt** - 22090004
-* **Lê Quang Lâm** - 22090012
+Trần Văn Đat-22040007
 
 ## Overview
 
@@ -47,35 +44,25 @@ A dedicated page for each tour, offering in-depth information.
 
 * **Beautifully Designed UI:** A clean, intuitive, and responsive interface built with Next.js and Tailwind CSS.
 * **Comprehensive Search & Filter:** Efficiently find tours using detailed search, filter, and sort capabilities.
-* **User Authentication:** Secure registration and login for personalized experiences.
-* **User Profile Management:** Dedicated user page to view and manage personal details.
 * **Booking History:** Track and review past tour bookings.
 * **Review Submission:** Submit reviews for tours directly on their detail pages.
 
-## Admin Functions
-
-A dedicated administration panel for managing website content and operations (requires admin privileges).
-
-* **Tour Management:**
-    * View a list of all tours with search and filter options.
-    * Add, edit, and delete tour listings.
-* **Booking Management:**
-    * View a list of all tour bookings/inquiries.
-    * Search and filter bookings by status, date, or user.
-    * Process or cancel orders.
-* **User Management:**
-    * View a list of registered users.
-    * Search and filter user accounts.
-    * Manage (add/delete/lock) user accounts.
-* **Basic Analytics:** (Potentially integrated with Google Analytics or a simple internal dashboard for sales/popularity based on bookings).
 
 ## Screenshots
 
 *(Placeholder for screenshots of your GoExplore website. You should add actual images here once your UI is ready.)*
 
-* [Homepage Screenshot](link-to-homepage-screenshot.jpg)
-* [Tours Listing Page Screenshot](link-to-tours-listing-screenshot.jpg)
-* [Tour Detail Page Screenshot](link-to-tour-detail-screenshot.jpg)
-* [Mobile View Screenshot](link-to-mobile-view-screenshot.jpg)
+* [Homepage Screenshot](![image](https://github.com/user-attachments/assets/4b0df758-380b-4e60-a392-67a52886d160)
+)
+* [Tours Listing Page Screenshot](![image](https://github.com/user-attachments/assets/c93b5d2e-25c6-43a0-b97c-faac673a75d5)
+)
+)
+* [Tour Detail Page Screenshot](![image](https://github.com/user-attachments/assets/22d20edc-9471-47cb-806a-d580c01b03a2)
+* [Tours page](![image](https://github.com/user-attachments/assets/380f526f-7eca-43b8-900a-cd3f469e15e7)
+)
+)
+* [Mobile View Screenshot](![image](https://github.com/user-attachments/assets/ae63d4fe-c0dc-4db1-8769-d3860b5746fa)
 
+)
+Welcome to [GoExplore](https://go-explore-your-vercel-app.vercel.app/), a dynamic travel platform
 ---
