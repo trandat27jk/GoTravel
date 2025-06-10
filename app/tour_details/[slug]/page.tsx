@@ -113,16 +113,41 @@ export default async function TourDetailPage(props: { params: { slug:string } })
 
             {/* Image Gallery */}
             <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 mb-8 md:h-[500px]">
-                <div className="relative md:row-span-2 md:col-span-2 rounded-xl overflow-hidden shadow-lg h-[300px] md:h-full">
-                    <Image src={mainImage} alt={title} fill className="object-cover" priority sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw" />
-                </div>
-                <div className="relative rounded-xl overflow-hidden shadow-md h-[150px] md:h-full">
-                    <Image src={galleryImage1} alt={`${title} gallery 1`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-                </div>
-                <div className="relative rounded-xl overflow-hidden shadow-md h-[150px] md:h-full">
-                    <Image src={galleryImage2} alt={`${title} gallery 2`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-                </div>
+  {/* Main Image */}
+            <div className="relative md:row-span-2 md:col-span-2 rounded-xl overflow-hidden shadow-lg h-[300px] md:h-full group">
+                <Image
+                src={mainImage}
+                alt={title}
+                fill
+                className="object-cover transform transition duration-300 ease-in-out group-hover:scale-105"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw"
+                />
             </div>
+
+            {/* Gallery Image 1 */}
+            <div className="relative rounded-xl overflow-hidden shadow-md h-[150px] md:h-full group">
+                <Image
+                src={galleryImage1}
+                alt={`${title} gallery 1`}
+                fill
+                className="object-cover transform transition duration-300 ease-in-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                />
+            </div>
+
+            {/* Gallery Image 2 */}
+            <div className="relative rounded-xl overflow-hidden shadow-md h-[150px] md:h-full group">
+                <Image
+                src={galleryImage2}
+                alt={`${title} gallery 2`}
+                fill
+                className="object-cover transform transition duration-300 ease-in-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                />
+            </div>
+            </div>
+
 
             {/* Main Content & Sidebar */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -134,14 +159,14 @@ export default async function TourDetailPage(props: { params: { slug:string } })
                             <div className="w-12 h-12 flex-shrink-0 mr-4 rounded-lg bg-gray-100 border border-gray-200"></div>
                             <div>
                                 <p className="text-sm font-semibold text-indigo-900">Duration</p>
-                                <p className="text-base text-gray-600">{duration}</p>
+                                <p className="text-base text-gray-600">{duration} days</p>
                             </div>
                         </div>
                         <div className="flex items-center">
                             <div className="w-12 h-12 flex-shrink-0 mr-4 rounded-lg bg-gray-100 border border-gray-200"></div>
                             <div>
                                 <p className="text-sm font-semibold text-indigo-900">Group Size</p>
-                                <p className="text-base text-gray-600">{group_size}</p>
+                                <p className="text-base text-gray-600">{group_size} people</p>
                             </div>
                         </div>
                         <div className="flex items-center">
@@ -207,25 +232,28 @@ export default async function TourDetailPage(props: { params: { slug:string } })
 
                     {/* Itinerary Section */}
                     {itineraryList.length > 0 && (
-                        <section className="mb-10">
-                             <h2 className="text-3xl font-bold text-[#1A1A4B] mb-6">Itinerary</h2>
-                             <div className="relative pl-6">
-                                 <div className="absolute left-[8px] top-0 h-full w-[2px] bg-orange-300 opacity-60"></div>
-                                 {itineraryList.map((item, index) => (
-                                     <div key={index} className="mb-8 relative">
-                                         <div className="absolute -left-[41px] top-0 w-5 h-5 rounded-full flex items-center justify-center bg-orange-500 border-4 border-white">
-                                             {item.description && <div className="w-2 h-2 rounded-full bg-white"></div>}
-                                         </div>
-                                         <div className="ml-6">
-                                             <h3 className="text-lg font-semibold text-gray-800 mb-1">Day {item.day_number}: {item.title}</h3>
-                                             {item.description && <p className="text-gray-700 leading-relaxed pl-2">{item.description}</p>}
-                                         </div>
-                                     </div>
-                                 ))}
-                             </div>
-                        </section>
-                    )}
+                    <section className="mb-12">
+                        <h2 className="text-3xl font-bold text-[#1A1A4B] mb-8">Itinerary</h2>
+                        <div className="space-y-10"> {/* Removed relative and pl-6 here */}
+                        {itineraryList.map((item, index) => (
+                            <div key={index} className="flex items-start"> {/* Use flex to align dot and content */}
+                            {/* Dot */}
+                            <div className="flex-shrink-0 w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-md mr-4 mt-1"></div> {/* Added mr-4 and mt-1 */}
 
+                            {/* Content */}
+                            <div>
+                                <h3 className="text-xl font-semibold text-[#1A1A4B]">
+                                Day {item.day_number}: {item.title}
+                                </h3>
+                                {item.description && (
+                                <p className="mt-2 text-gray-700 leading-relaxed">{item.description}</p>
+                                )}
+                            </div>
+                            </div>
+                        ))}
+                        </div>
+                    </section>
+                    )}
                     {/* Tour Reviews Section */}
                     <TourReviewsSection tourId={id} />
                 </div>
