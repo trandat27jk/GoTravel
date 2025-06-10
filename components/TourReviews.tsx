@@ -125,15 +125,6 @@ export default function TourReviews({ tourId, reviewsVersion }: { tourId: string
               )}
               
               <p className="text-gray-700 leading-relaxed text-base mb-4">{review.review_text}</p>
-
-              <div className="flex space-x-4 text-sm text-gray-600 font-medium">
-                <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                  <span className="mr-1">👍</span> Helpful
-                </button>
-                <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                  <span className="mr-1">👎</span> Not helpful
-                </button>
-              </div>
             </div>
           ))}
         </div>
