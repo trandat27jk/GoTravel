@@ -52,10 +52,11 @@ A dedicated page for each tour, offering in-depth information.
 
 *(Placeholder for screenshots of your GoExplore website. You should add actual images here once your UI is ready.)*
 
-* [Homepage Screenshot](![image](https://github.com/user-attachments/assets/4b0df758-380b-4e60-a392-67a52886d160)
-)
-* [Tours Listing Page Screenshot](![image](https://github.com/user-attachments/assets/c93b5d2e-25c6-43a0-b97c-faac673a75d5)
-)
+
+* **Homepage:** [![Homepage Screenshot](https://github.com/user-attachments/assets/4b0df758-380b-4e60-a392-67a52886d160)](https://go-explore-your-vercel-app.vercel.app/)
+
+* **Tours Listing Page:** [![Tours Listing Page Screenshot](https://github.com/user-attachments/assets/c93b5d2e-25c6-43a0-b97c-faac673a75d5)](https://go-explore-your-vercel-app.vercel.app/destinations)
+
 )
 * [Tour Detail Page Screenshot](![image](https://github.com/user-attachments/assets/22d20edc-9471-47cb-806a-d580c01b03a2)
 * [Tours page](![image](https://github.com/user-attachments/assets/380f526f-7eca-43b8-900a-cd3f469e15e7)
