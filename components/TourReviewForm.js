@@ -1,9 +1,10 @@
 // components/TourReviewForm.js
 "use client";
 import { useState } from 'react';
-import supabase from '../utils/supabase/client';
+import {createClient} from '../utils/supabase/client';
 import { FaStar } from 'react-icons/fa';
 
+const supabase = createClient();
 export default function TourReviewForm({ tourId, onReviewSubmitted }) { // Changed prop name to tourId
   const [reviewerName, setReviewerName] = useState('');
   const [reviewTitle, setReviewTitle] = useState(''); // This maps to reviewer_title in DB

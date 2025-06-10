@@ -2,13 +2,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Replaced 'domains' with 'remotePatterns'
     remotePatterns: [
       {
-        protocol: 'https', // Specify the protocol (http or https)
-        hostname: 'i.pinimg.com', // Your image domain
-        port: '', // Leave empty unless a specific port is used
-        pathname: '**', // Matches any path on this hostname
+        protocol: 'https',
+        hostname: 'i.pinimg.com',
+        port: '',
+        pathname: '**',
       },
       {
         protocol: 'https',
@@ -19,6 +18,15 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'img.icons8.com',
+        port: '',
+        pathname: '**',
+      },
+      // Add Supabase Storage hostname here if you serve images from Supabase buckets
+      {
+        protocol: 'https',
+        // IMPORTANT: Replace 'YOUR_PROJECT_REF.supabase.co' with your actual Supabase project reference
+        // You can find this in your Supabase project URL (e.g., https://<YOUR_PROJECT_REF>.supabase.co)
+        hostname: '*.supabase.co', // Use a wildcard for subdomains like 'storage.your-project-ref.supabase.co'
         port: '',
         pathname: '**',
       },

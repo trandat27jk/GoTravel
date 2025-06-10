@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import supabase from "../utils/supabase/client";
+import { createClient } from "../utils/supabase/client";
 
+const supabase = createClient();
 const DESTINATIONS_PER_PAGE = 8;
 
 export default function TrendingDestinations() {
@@ -31,7 +32,7 @@ export default function TrendingDestinations() {
         tours.forEach((tour) => {
           const key = `${tour.province}, ${tour.country}`;
           if (!destinationData[key]) {
-            let representativeImage = "/assets/images/placeholder.jpg";
+            let representativeImage = "/assets/images/placeholder.jpg"; // A default placeholder
             if (tour.cover_image && typeof tour.cover_image === "string" && tour.cover_image.trim() !== "") {
               representativeImage = tour.cover_image;
             } else if (
@@ -46,7 +47,8 @@ export default function TrendingDestinations() {
               name: tour.province,
               location: `${tour.province}, ${tour.country}`,
               tourCount: 0,
-              slug: tour.slug || "#",
+              // Use the slug from the first tour found for that destination
+              slug: tour.slug || "#", 
               image: representativeImage,
             };
           }
@@ -110,19 +112,22 @@ export default function TrendingDestinations() {
 
         <div className="flex flex-wrap justify-center gap-8">
           {destinationsToDisplay.map((destination, idx) => (
-            <Link href={`/tour_details/${destination.slug}`} key={idx}>
-              <div className="flex flex-col items-center text-center transition duration-300 transform hover:-translate-y-1 hover:shadow-xl cursor-pointer">
-                <div className="relative w-28 h-28 mb-4">
-                  <Image
-                    src={destination.image}
-                    alt={destination.name}
-                    fill
-                    className="rounded-full object-cover shadow transition-transform duration-300 hover:scale-105"
-                    sizes="112px"
-                    // Only the FIRST page images get `priority`
-                    priority={currentPage === 0}
-                  />
-                </div>
+            <Link
+              href={`/tour_details/${destination.slug}`}
+              key={idx}
+              className="group flex flex-col items-center text-center cursor-pointer"
+            >
+              <div className="relative w-28 h-28 mb-4">
+                <Image
+                  src={destination.image}
+                  alt={destination.name}
+                  fill
+                  className="rounded-full object-cover shadow transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
+                  sizes="112px"
+                  priority={currentPage === 0 && idx < DESTINATIONS_PER_PAGE}
+                />
+              </div>
+              <div className="transition-transform duration-300 group-hover:-translate-y-1">
                 <h4 className="text-md font-semibold text-[#1A1A4B]">{destination.name}</h4>
                 <p className="text-sm text-gray-600">{destination.tourCount} Tours</p>
               </div>
