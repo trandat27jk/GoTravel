@@ -97,10 +97,10 @@ export default function TourReviews({ tourId, reviewsVersion }: { tourId: string
       ) : (
         <div className="space-y-8"> {/* Increased space between review cards */}
           {reviews.map((review) => (
-            <div key={review.id} className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-1 duration-300">
+            <div key={review.id} className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100 transform transition-transform hover:-translate-y-1 duration-300"> {/* Changed shadow-md to shadow-sm */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center">
-                  <div className="w-14 h-14 rounded-full bg-[#1A1A4B] flex items-center justify-center text-white font-bold text-xl mr-4 shadow-sm flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full bg-[#1A1A4B] flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md flex-shrink-0">
                     {getInitials(review.reviewer_name)}
                   </div>
                   <div>
