@@ -12,10 +12,11 @@ export default function TravelArticles() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Article 1 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+            {/* ADDED bg-gray-200 to image wrapper */}
+            <div className="relative w-full h-48 bg-gray-200 flex items-center justify-center"> {/* Wrapper for Image */}
               <Image
                 src="/assets/images/travelling.jpg"
-                alt="Article 1"
+                alt="Article 1: 10 Tips for Traveling on a Budget" // Improved alt text
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -34,10 +35,11 @@ export default function TravelArticles() {
 
           {/* Article 2 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+            {/* ADDED bg-gray-200 to image wrapper */}
+            <div className="relative w-full h-48 bg-gray-200 flex items-center justify-center"> {/* Wrapper for Image */}
               <Image
                 src="/assets/images/adventure.jpg"
-                alt="Article 2"
+                alt="Article 2: Top 5 Destinations for Adventure Seekers" // Improved alt text
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -58,10 +60,11 @@ export default function TravelArticles() {
 
           {/* Article 3 */}
           <article className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="relative w-full h-48"> {/* Wrapper for Image */}
+            {/* ADDED bg-gray-200 to image wrapper */}
+            <div className="relative w-full h-48 bg-gray-200 flex items-center justify-center"> {/* Wrapper for Image */}
               <Image
                 src="/assets/images/cultural.jpg"
-                alt="Article 3"
+                alt="Article 3: Cultural Etiquette Around the World" // Improved alt text
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
